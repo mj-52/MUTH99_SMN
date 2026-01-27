@@ -1,9 +1,9 @@
 name: i_anda_xg
 
 on:
-  workflow_dispatch:    # Manual run
-  schedule:             # Automatic re-run every 6 hours
-    - cron: "0 */6 * * *"  # At minute 0, every 6th hour
+  workflow_dispatch:
+  schedule:
+    - cron: "40 10 * * *"   # 13:40 EAT
 
 concurrency:
   group: i_anda_xg
@@ -12,6 +12,11 @@ concurrency:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        attempt: [1, 2, 3]
 
     steps:
     - name: Checkout repository
@@ -30,7 +35,7 @@ jobs:
       run: |
         unzip pocketoptionapi.zip -d ./
 
-    - name: Run the bot
+    - name: Run the bot (attempt ${{ matrix.attempt }})
       env:
         OANDA_TOKEN: ${{ secrets.OANDA_TOKEN }}
         OANDA_ID: ${{ secrets.OANDA_ID }}
